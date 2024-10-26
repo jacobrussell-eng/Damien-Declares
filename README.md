@@ -5,6 +5,6 @@
  ## Style references:
 
  Color palette: [Vegetable Rainbow](https://www.color-hex.com/color-palette/1051883)\
- Font pack: [Orbitron](https://fonts.google.com/specimen/Orbitron)\
- Interface reference image:\
- ![Simon Says](simon.jpg)
+ Font pack: [Emily's Candy](https://fonts.google.com/specimen/Emilys+Candy), [Orbitron](https://fonts.google.com/specimen/Orbitron)\
+ Interface reference images:\
+ <img src = "simon.jpg" alt="Simon Says" height="400"> <img alt="The Omen" src="omen.jpg" height="400">

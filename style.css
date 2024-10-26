@@ -1,9 +1,10 @@
 :root {
-    --bg-col: hsl(0.19, 3%, 65%);
+    --bg-col: hsl(0, 77%, 55%);
+    --head-col: hsl(0.19,23%,11%);
 }
 
 html {
-  font-family: "Orbitron", sans-serif;
+  font-family: "Emilys Candy","Orbitron", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
@@ -12,7 +13,7 @@ html {
 header {
     width: 100%;
     height: 10vh;
-    background-color: hsl(0.19,23%,11%);
+    background-color: var(--head-col);
     top: 0px;
     left: 0px;
     display: flex;
@@ -24,7 +25,7 @@ header {
 }
 
 h1 {
-    font-weight: 700;
+    font-weight: 300;
     color: #fff;
 }
 
@@ -44,6 +45,8 @@ body {
     margin-top: -225px;
     margin-left: -225px;
     border: 1px solid #000;
+    border-radius: 100%;
+    background-color: var(--head-col);
 }
 
 .quarter {
@@ -51,6 +54,7 @@ body {
     height: 45%;
     position: absolute;
     cursor: pointer;
+    border: none;
 }
 
 /* Quarter circles: */
@@ -59,25 +63,49 @@ body {
     border-radius: 100% 0 0 0;
     top: 0; margin-top: 4%;
     left: 0; margin-left: 4%;
+} 
+.q1:hover { background-color: hsl(94, 100%, 60%);}
+.q1:active {
+    transform: translateY(1%) translateX(1%);
+    background-color: hsl(94, 100%, 40%);
 }
+
 .q2 {
-    background-color: hsl(0, 100%, 60%); /* Red */
+    background-color: hsl(0, 75%, 60%); /* Red */
     border-radius: 0 100% 0 0;
     top: 0; margin-top: 4%;
     right: 0; margin-right: 4%;
+} 
+.q2:hover { background-color: hsl(0, 100%, 60%);}
+.q2:active {
+    transform: translateY(1%) translateX(1%);
+    background-color: hsl(0, 100%, 40%);
 }
+
 .q3 {
-    background-color: hsl(53, 100%, 60%); /* Green */
+    background-color: hsl(53, 75%, 50%); /* Green */
     border-radius: 0 0 0 100%;
     bottom: 0; margin-bottom: 4%;
     left: 0; margin-left: 4%;
+} 
+.q3:hover { background-color: hsl(53, 100%, 50%);}
+.q3:active {
+    transform: translateY(1%) translateX(1%);
+    background-color: hsl(53, 100%, 40%);
 }
+
 .q4 {
-    background-color: hsl(214, 70%, 50%);  /* Blue */
+    background-color: hsl(214, 75%, 40%);  /* Blue */
     border-radius: 0 0 100% 0;
     bottom: 0; margin-bottom: 4%;
     right: 0; margin-right: 4%;
+} 
+.q4:hover { background-color: hsl(214, 100%, 55%);}
+.q4:active {
+    transform: translateY(1%) translateX(1%);
+    background-color: hsl(214, 100%, 35%);
 }
+
 
 /* Circle centre: */
 .overlay {
@@ -87,14 +115,25 @@ body {
     border-radius: 100%;
     top: 30%;
     left: 30%;
-    background-color: var(--bg-col);
+    background-color: var(--head-col);
     z-index: 10;
-    border: 1px solid black;
+    /* border: 1px solid black; */
 }
 
 h2 {
     text-align: center;
     position: relative;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     margin-top: 40%;
+    font-family: "Orbitron", sans-serif;
+    color: #fff;
+}
+
+/* Damien pic */
+.damien {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 30%;
+    width: auto;
 }
