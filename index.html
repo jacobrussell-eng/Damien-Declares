@@ -7,20 +7,25 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Emilys+Candy&family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+        <script src="main.js"></script>
     </head>
     <body>
         <header>
             <h1>DAMIEN DECLARES!</h1>
         </header>
         <div id="playspace">
-            <button class="quarter q1"></button>
-            <button class="quarter q2"></button>
-            <button class="quarter q3"></button>
-            <button class="quarter q4"></button>
+            <button class="quarter q1" value = "1" onclick="addToScore()"></button>
+            <button class="quarter q2" value = "2" onclick="addToScore()"></button>
+            <button class="quarter q3" value = "3" onclick="addToScore()"></button>
+            <button class="quarter q4" value = "4" onclick="addToScore()"></button>
             <div class="overlay">
                 <h2>Play!</h2>
             </div>
         </div>
-        <img id="damien" src="damien.png">
+        <div id="infobox">
+            <p>Score: <input type="text" id="score" value="0"></p>
+        </div>
+
+        <img id="damien" src="images/damien.png">
     </body>
 </html>
