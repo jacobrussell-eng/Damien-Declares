@@ -12,6 +12,9 @@
     <body>
         <header>
             <h1>DAMIEN DECLARES!</h1>
+            <button id="mute" onclick="toggleMusic()">
+                <img src="images/volume.png" id="musicIcon">
+            </button>
         </header>
         <div id="playspace">
             <button class="quarter q1" value = "1" onclick="addToScore()"></button>
@@ -23,7 +26,9 @@
             </div>
         </div>
         <div id="infobox">
-            <p>Score: <input type="text" id="score" value="0"></p>
+            <p>Score: <span id="score"></span></p>
+            <p>Highscore: <input type="text" id="highscore" value="0"></p>
+            <!-- <input type="text" id="score" value="0"> -->
         </div>
 
         <img id="damien" src="images/damien.png">

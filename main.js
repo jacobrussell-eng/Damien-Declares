@@ -1,100 +1,144 @@
+// Game variable initation:
 let correctOrder = [];
 let playerOrder = [];
 let counter;
 let gameover;
+let highscore;
 
+// HTML element initation:
 const greenQuarter = document.querySelector(".q1");
 const redQuarter = document.querySelector(".q2");
 const yellowQuarter = document.querySelector(".q3");
 const blueQuarter = document.querySelector(".q4");
-const scoreDisplay = document.querySelector("#score");
+const highscoreDisplay = document.querySelector("#highscore");
 
-function addToScore() {
-    let Bloop = new Audio("wavs/player_bloop.wav");
-    let currentScore = parseInt(document.getElementById("score").value);
-    currentScore++;
-    Bloop.play();
-    document.getElementById("score").value = currentScore;
-}
 
-// try scoreDisplay.innerHTML for score updating?
+// Audio file initation:
+const bgTrack = new Audio("wavs/AveSatani.wav");
+const greenBleep = new Audio("wavs/green.wav");
+const redBleep = new Audio("wavs/red.wav");
+const yellowBleep = new Audio("wavs/yellow.wav");
+const blueBleep = new Audio("wavs/blue.wav");
+const wrongChoice = new Audio("wavs/gameover.wav");
 
-// this function can be made redundant and condensed in later switch
-function Chime(color) {
-    switch (color) {
-        case "green":
-            let cBleep = new Audio("wavs/green.wav");
-            cBleep.play();
-            break;
-        case "red":
-            let cBleep = new Audio("wavs/red.wav");
-            cBleep.play();
-            break;
-        case "yellow":
-            let cBleep = new Audio("wavs/yellow.wav");
-            cBleep.play();
-            break;
-        case "blue":
-            let cBleep = new Audio("wavs/blue.wav");
-            cBleep.play();
-            break;
+// Image preloading:
+var mutePreload = new Image();
+mutePreload.src = "images/mute.png";
+var soundPreload = new Image();
+soundPreload.src = "images/volume.png";
+var damienPreload = new Image();
+damienPreload.src = "images/damien.png";
+
+// On Load actions:
+window.addEventListener("DOMContentLoaded", event => {
+    bgTrack.volume = 0.2;
+    bgTrack.play();
+    const scoreDisplay = document.querySelector("#score");
+    scoreDisplay.innerHTML = "0";
+});
+
+// Background Music button functionality:
+function toggleMusic() {
+    const musicIcon = document.querySelector("#musicIcon");
+    if (musicIcon.src.endsWith("volume.png")) {
+        musicIcon.src = mutePreload.src;
+        bgTrack.pause();
+    } else {
+        musicIcon.src = soundPreload.src;
+        bgTrack.play();
     }
 }
 
+function addToScore() {
+    let Bloop = new Audio("wavs/red.wav");
+    let currentScore = parseInt(document.getElementById("score").textContent);
+    currentScore++;
+    Bloop.play();
+    document.getElementById("score").textContent = String(currentScore);
+}
 
+// Main game code:
 function gameSession() {
     gameover = false;
     correctOrder = [];
     playerOrder = [];
     counter = 0;
     while (!gameover) {
+        // Generate new color:
         let currentColor = Math.floor((Math.random()*4)+1);
         correctOrder[counter] = currentColor;
-        // Display colors logic here
+
+        // Displaying colors:
         for (j=0;j<correctOrder.length;j++) {
             setTimeout(function() {
                 switch (correctOrder[j]) {
                     case 1:
                         greenQuarter.style.backgroundColor = "hsl(94,100%,100%)";
-                        Chime(green);
+                        greenBleep.play();
                         break;
                     case 2:
                         redQuarter.style.backgroundColor = "hsl(0,100%,100%)";
-                        Chime(red);
+                        redBleep.play();
                         break;
                     case 3:
                         yellowQuarter.style.backgroundColor = "hsl(53,100%)";
-                        Chime(yellow);
+                        yellowBleep.play();
                         break;
                     case 4:
                         blueQuarter.style.backgroundColor = "hsl(214,100%)";
-                        Chime(blue);
+                        blueBleep.play();
                         break;
                 }
             },1000);
         }
-        playerOrder = [];
 
-        // use a while loop for player turns?
-        // Player pressing button logic here
+        playerOrder = [];
+        iterator = 0;
+
+        /* 
+            1: Logic to force wait for enough user button presses (while?)
+            2: Detect what button is pressed, and add value to playerOrder[]
+            3: Check each playerOrder[i] against correctOrder[i]
+            4: If incorrect, game over. If correct, next round
+            5: Update scores and highscore if necessary
+        */
+
+        while (playerOrder.length < correctOrder.length) {
+            greenQuarter.addEventListener("click", (event) => {
+                playerOrder[iterator] = 1;
+                if (playerOrder[iterator] != correctOrder[iterator]) {
+                    gameover=true;
+                    return;
+                    // exit game
+                }; 
+            });
+            redQuarter.addEventListener("click", (event) => {
+                playerOrder[iterator] = 2;
+            });
+            yellowQuarter.addEventListener("click", (event) => {
+                playerOrder[iterator] = 3;
+            });
+            blueQuarter.addEventListener("click", (event) => {
+                playerOrder[iterator] = 4;
+            });
         
-        // init iterator
-        let playerChoice = parseInt(buttonstuff);
-        playerOrder[iterator] = playerChoice;
-        
-        if (playerOrder.length == correctOrder.length) {
-            compareOrders(playerOrder,correctOrder);
+            if (gameover) {
+                // game over logic
+                // reveal text element that says "game over"
+                wrongChoice.play();
+                break;
+            } else { iterator++ }
         }
 
-        counter++;
-    }
-}
-
-// to be finished:
-function compareOrders(player,correct) {
-    for (i=0;i<correct.length;i++) {
-        if (player[i] !== correct[i]) {
-            gameover = true;
+        if (gameover) {
+            return;
+        } else {
+            counter++;
+            scoreDisplay.textContent = String(counter);
+            if (counter > highscore) {
+                highscore = counter;
+                highscoreDisplay.textContent = String(highscore);
+            }
         }
     }
 }

@@ -1,13 +1,8 @@
+/* Custom fonts: 'Emilys Candy' (serif), 'Orbitron' (sans) */
+
 :root {
     --bg-col: hsl(0, 77%, 55%);
     --head-col: hsl(0.19,23%,11%);
-}
-
-html {
-  font-family: "Emilys Candy","Orbitron", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
 }
 
 header {
@@ -25,8 +20,23 @@ header {
 }
 
 h1 {
-    font-weight: 300;
+    font-family: "Orbitron", sans-serif;
+    font-weight: 400;
     color: #fff;
+}
+
+#mute {
+    background-color: transparent;
+    height: 60%;
+    width: auto;
+    border: none;
+    position: absolute;
+    right: 1%;
+}
+#musicIcon {
+    height: inherit;
+    width: auto;
+    filter: invert(1); /* Black to White */
 }
 
 body {
@@ -154,10 +164,10 @@ h2 {
 #damien {
     position: absolute;
     display: block;
-    right: -15%;
+    right: -8%;
     bottom: -10%;
     height: auto;
-    width: 40%;
+    width: 18%;
     z-index: 1;
     transform: rotate(-15deg);
     transition: transform 0.5s ease-out;
