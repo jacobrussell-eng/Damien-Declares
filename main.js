@@ -6,10 +6,7 @@ let gameover;
 let highscore;
 
 // HTML element initation:
-const greenQuarter = document.querySelector(".q1");
-const redQuarter = document.querySelector(".q2");
-const yellowQuarter = document.querySelector(".q3");
-const blueQuarter = document.querySelector(".q4");
+
 const highscoreDisplay = document.querySelector("#highscore");
 
 
@@ -59,10 +56,18 @@ function addToScore() {
 
 // Main game code:
 function gameSession() {
+    // Reset game variables:
     gameover = false;
     correctOrder = [];
     playerOrder = [];
     counter = 0;
+
+    // Connect HTML elements:
+    const greenQuarter = document.querySelector(".q1");
+    const redQuarter = document.querySelector(".q2");
+    const yellowQuarter = document.querySelector(".q3");
+    const blueQuarter = document.querySelector(".q4");
+
     while (!gameover) {
         // Generate new color:
         let currentColor = Math.floor((Math.random()*4)+1);
@@ -70,6 +75,7 @@ function gameSession() {
 
         // Displaying colors:
         for (j=0;j<correctOrder.length;j++) {
+            // set to default first?
             setTimeout(function() {
                 switch (correctOrder[j]) {
                     case 1:
@@ -108,31 +114,45 @@ function gameSession() {
                 playerOrder[iterator] = 1;
                 if (playerOrder[iterator] != correctOrder[iterator]) {
                     gameover=true;
-                    return;
-                    // exit game
+                    return; // exit game
                 }; 
             });
             redQuarter.addEventListener("click", (event) => {
                 playerOrder[iterator] = 2;
+                if (playerOrder[iterator] != correctOrder[iterator]) {
+                    gameover=true;
+                    return; // exit game
+                };
             });
             yellowQuarter.addEventListener("click", (event) => {
                 playerOrder[iterator] = 3;
+                if (playerOrder[iterator] != correctOrder[iterator]) {
+                    gameover=true;
+                    return; // exit game
+                };
             });
             blueQuarter.addEventListener("click", (event) => {
                 playerOrder[iterator] = 4;
+                if (playerOrder[iterator] != correctOrder[iterator]) {
+                    gameover=true;
+                    return; // exit game
+                };
             });
         
             if (gameover) {
                 // game over logic
                 // reveal text element that says "game over"
+                const tryAgain = document.querySelector("#playButton");
+                tryAgain.innerHTML = "Try Again!";
                 wrongChoice.play();
                 break;
             } else { iterator++ }
         }
 
         if (gameover) {
-            return;
-        } else {
+            return; // end game
+        } 
+        else { // Update scores and move to next round:
             counter++;
             scoreDisplay.textContent = String(counter);
             if (counter > highscore) {
