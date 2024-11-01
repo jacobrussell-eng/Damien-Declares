@@ -14,7 +14,16 @@ const flashHSLValues = {
     4: "hsl(214, 100%, 65%)" // Blue
 };
 
+// Reference for speed settings:
+const speedSettings = {
+    slow: { interval: 500, flashDuration: 500 },
+    normal: { interval: 200, flashDuration: 350 },
+    fast: { interval: 150, flashDuration: 150 },
+    ultrafast: { interval: 25, flashDuration: 50}
+};
+
 // HTML element connect:
+const speedDropdown = document.querySelector("#speedSetting");
 const buttons = document.querySelectorAll(".quarter");
 const centerDisplay = document.querySelector("#playButton");
 const startLink = document.querySelector("#startLink");
@@ -48,12 +57,13 @@ damienPreload.src = "images/damien.png";
 
 // On Load actions:
 window.addEventListener("DOMContentLoaded", () => {
+    speedDropdown.value = "normal";
     bgTrack.volume = 0.2;
     bgTrack.loop = true;
     bgTrack.play();
     buttons.forEach(button => { 
         button.addEventListener('click', (event) => buttonPress(event.target));
-        disableButton(button);
+        toggleElement(button);
     });
     scoreDisplay.innerHTML = "0";
     highscoreDisplay.innerHTML = "0";
@@ -72,7 +82,7 @@ function toggleMusic() {
 }
 
 // Prevent button activity:
-function disableButton(target) {
+function toggleElement(target) {
     if (target.disabled === true) {
         target.classList.remove("disabled");
         target.disabled = false;
@@ -85,34 +95,40 @@ function disableButton(target) {
 
 // Display color function:
 function displayColors(colorSequence) {
-    let colorIndex = 0;
+    return new Promise((resolve) => {
+        let colorIndex = 0;
+        // Read speed settings:
+        const { flashInterval, flashDuration } = speedSettings[speedDropdown.value];
 
-    // Function to flash a single color:
-    const flashColor = () => {
-        // If complete, end sequence:
-        if (colorIndex >= colorSequence.length) {
-            return; 
-        }
+        // Function to flash a single color:
+        const flashColor = () => {
+            // If complete, end sequence:
+            if (colorIndex >= colorSequence.length) {
+                resolve();
+                return; 
+            }
 
-        // Determine which color to flash:
-        let colorId = colorSequence[colorIndex]; // = 1, 2, 3 or 4
+            // Determine which color to flash:
+            let colorId = colorSequence[colorIndex]; // = 1, 2, 3 or 4
 
-        // Flash the color & play sound:
-        buttonList[colorId].style.backgroundColor = flashHSLValues[colorId]; // Set the brighter color
-        const beep = new Audio(soundFX[colorId]);
-        beep.play();
+            // Flash the color & play sound:
+            buttonList[colorId].style.backgroundColor = flashHSLValues[colorId]; // Set the brighter color
+            const beep = new Audio(soundFX[colorId]);
+            beep.play();
 
-        // Reset the color after 0.5s:
-        setTimeout(() => {
-            buttonList[colorId].style.backgroundColor = "";
-            colorIndex++;
-            // Wait 0.1s before flashing the next color
-            setTimeout(flashColor, 100); 
-        }, 500);
-    };
 
-    // Start the flashing sequence:
-    flashColor(); 
+            // Reset the color after 0.5s:
+            setTimeout(() => {
+                buttonList[colorId].style.backgroundColor = "";
+                colorIndex++;
+                // Wait 0.1s before flashing the next color
+                setTimeout(flashColor, flashInterval); 
+            }, flashDuration);
+        };
+
+        // Start the flashing sequence:
+        flashColor(); 
+    });
 }
 
 
@@ -164,7 +180,7 @@ async function gameRound() {
     
     // Disable player activity:
     buttons.forEach(button => {
-        disableButton(button);
+        toggleElement(button);
     });
 
     // Generate a new color to store:
@@ -173,12 +189,13 @@ async function gameRound() {
     console.log("CPU array after new color: ", cpu);
 
     // Display each cpu color:
-    displayColors(cpu);
+    await displayColors(cpu).then();
 
     // Player's turn:
     buttons.forEach(button => {
-        disableButton(button);
+        toggleElement(button);
     });
+
     await playerInput().then(() => {
         console.log("Resolved");
         round++;
@@ -191,19 +208,23 @@ async function gameRound() {
             highscore = round;
             highscoreDisplay.textContent = String(highscore);
         }
-        // Wait 0.5s before next round:
+        // Wait 0.75s before next round:
         setTimeout(gameRound, 750); 
     })
     .catch(() => {
+        // For testing:
         console.log("Rejected");
         console.log("Player array (in .catch): ", player);
         console.log("CPU array (in .catch): ", cpu);
         // Disable at end of game:
         buttons.forEach(button => {
-            disableButton(button);
+            toggleElement(button);
         });
+        // Reset buttons:
         startLink.onclick = startNewGame;
-        disableButton(overlayDiv);
+        toggleElement(overlayDiv);
+        toggleElement(speedDropdown);
+        // Change center text:
         centerDisplay.style.fontFamily = "Orbitron";
         centerDisplay.style.fontWeight = "bolder";
         centerDisplay.innerHTML = "Try Again!";
@@ -212,19 +233,24 @@ async function gameRound() {
 }
 
 function startNewGame() {
+    // Game var init:
     cpu = [];
     player = [];
     scoreDisplay.textContent = String(0);
     round = 0;
+    // Disable player buttons to begin:
     buttons.forEach(button => {
-        disableButton(button);
+        toggleElement(button);
     });
+    // Change center text:
     centerDisplay.textContent = "OBEY";
     centerDisplay.style.fontWeight = 200;
     centerDisplay.style.fontFamily = "Emilys Candy";
     // Disable center button:
-    disableButton(overlayDiv);
+    toggleElement(overlayDiv);
     startLink.onclick = null;
+    // Disable speed dropdown:
+    toggleElement(speedDropdown);
     // Wait 0.35s before starting:
     setTimeout(gameRound, 350); 
 }

@@ -15,14 +15,38 @@ header {
     position: absolute;
     z-index: 100;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     min-height: 75px;
 }
+
+#speedBox {
+    color: #fff;
+    margin-left: 1%;
+    font-family: "Orbitron", sans-serif;
+    font-weight: 300;
+}
+
+#speedSetting {
+    /* display: none; */
+    color: #fff;
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0%;
+    border: none;
+    appearance: none;
+    font-size: inherit;
+    font-family: inherit;
+    width: auto;
+}
+#speedSetting:hover { color: var(--bg-col); }
 
 h1 {
     font-family: "Orbitron", sans-serif;
     font-weight: 400;
     color: #fff;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-48%);
 }
 
 #mute {
@@ -30,15 +54,15 @@ h1 {
     height: 60%;
     width: auto;
     border: none;
-    position: absolute;
-    right: 1%;
+    /* position: absolute; */
+    margin-right: 1%;
     cursor: pointer;
 }
 #musicIcon {
     height: inherit;
     width: auto;
     filter: invert(1); /* Black to White */
-}
+} #musicIcon:hover { color: var(--bg-col); } /* not working? might not be able to manipulate an img by color */
 
 body {
     background-color: var(--bg-col);
@@ -175,7 +199,7 @@ h2 {
 
 /* Scores: */
 #infobox {
-    border: 1px solid black;
+    /* border: 1px solid black; */
     width: 400px;
     height: auto;
     display: block;
