@@ -1,6 +1,7 @@
 # Damien Declares
 
  Simon Says clone for Halloween - *do Damien's bidding or feel his wrath!*
+ <img src="images/homepage.png" alt="homepage" width="100%" height="auto">
 
  ## Style references:
 
