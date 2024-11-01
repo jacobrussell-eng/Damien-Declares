@@ -2,7 +2,7 @@
 
 :root {
     --bg-col: hsl(0, 77%, 55%);
-    --head-col: hsl(0.19,23%,11%);
+    --head-col: hsl(1,23%,11%);
 }
 
 header {
@@ -15,14 +15,38 @@ header {
     position: absolute;
     z-index: 100;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     min-height: 75px;
 }
+
+#speedBox {
+    color: #fff;
+    margin-left: 1%;
+    font-family: "Orbitron", sans-serif;
+    font-weight: 300;
+}
+
+#speedSetting {
+    /* display: none; */
+    color: #fff;
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0%;
+    border: none;
+    appearance: none;
+    font-size: inherit;
+    font-family: inherit;
+    width: auto;
+}
+#speedSetting:hover { color: var(--bg-col); }
 
 h1 {
     font-family: "Orbitron", sans-serif;
     font-weight: 400;
     color: #fff;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-48%);
 }
 
 #mute {
@@ -30,14 +54,15 @@ h1 {
     height: 60%;
     width: auto;
     border: none;
-    position: absolute;
-    right: 1%;
+    /* position: absolute; */
+    margin-right: 1%;
+    cursor: pointer;
 }
 #musicIcon {
     height: inherit;
     width: auto;
     filter: invert(1); /* Black to White */
-}
+} #musicIcon:hover { color: var(--bg-col); } /* not working? might not be able to manipulate an img by color */
 
 body {
     background-color: var(--bg-col);
@@ -53,7 +78,7 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    margin-top: -225px;
+    margin-top: -250px;
     margin-left: -225px;
     border: 1px solid #000;
     border-radius: 100%;
@@ -61,6 +86,7 @@ body {
     z-index: 5;
 }
 
+/* Quarter circles: */
 .quarter {
     width: 45%;
     height: 45%;
@@ -69,9 +95,9 @@ body {
     border: none;
 }
 
-/* Quarter circles: */
 .q1 {
-    background-color: hsl(94, 75%, 60%); /* Green */
+    --button-default: hsl(94, 75%, 60%); /* Green */
+    background-color: var(--button-default);
     border-radius: 100% 0 0 0;
     top: 0; margin-top: 4%;
     left: 0; margin-left: 4%;
@@ -83,7 +109,8 @@ body {
 }
 
 .q2 {
-    background-color: hsl(0, 75%, 60%); /* Red */
+    --button-default: hsl(0, 75%, 60%); /* Red */
+    background-color: var(--button-default);
     border-radius: 0 100% 0 0;
     top: 0; margin-top: 4%;
     right: 0; margin-right: 4%;
@@ -95,7 +122,8 @@ body {
 }
 
 .q3 {
-    background-color: hsl(53, 75%, 50%); /* Green */
+    --button-default: hsl(53, 75%, 50%); /* Yellow */
+    background-color: var(--button-default);
     border-radius: 0 0 0 100%;
     bottom: 0; margin-bottom: 4%;
     left: 0; margin-left: 4%;
@@ -107,7 +135,8 @@ body {
 }
 
 .q4 {
-    background-color: hsl(214, 75%, 40%);  /* Blue */
+    --button-default: hsl(214, 75%, 40%);  /* Blue */
+    background-color: var(--button-default);
     border-radius: 0 0 100% 0;
     bottom: 0; margin-bottom: 4%;
     right: 0; margin-right: 4%;
@@ -118,6 +147,15 @@ body {
     background-color: hsl(214, 100%, 35%);
 }
 
+/* Non-functional button state: */
+.quarter.disabled { 
+    cursor: default;
+    background-color: var(--button-default);
+}
+.quarter.disabled:hover,
+.quarter.disabled:active {
+    transform: none; 
+}
 
 /* Circle centre: */
 .overlay {
@@ -129,21 +167,39 @@ body {
     left: 30%;
     background-color: var(--head-col);
     z-index: 10;
-    /* border: 1px solid black; */
+    cursor: pointer;
+}
+.overlay:hover h2 {
+    color: var(--bg-col);
+}
+.overlay:active {
+    filter: brightness(0.8); /* Darken */
+}
+
+/* Non-functional state: */
+.overlay.disabled {
+    cursor: default;
+}
+.overlay.disabled:hover h2 {
+    color: #fff;
+}
+.overlay.disabled:active {
+    filter: brightness(1);
 }
 
 h2 {
     text-align: center;
     position: relative;
-    /* border: 1px solid black; */
+    /* border: none; */
     margin-top: 40%;
     font-family: "Orbitron", sans-serif;
+    font-weight: bolder;
     color: #fff;
 }
 
 /* Scores: */
 #infobox {
-    border: 1px solid black;
+    /* border: 1px solid black; */
     width: 400px;
     height: auto;
     display: block;
@@ -175,5 +231,5 @@ h2 {
 
 #damien:hover {
     transform: rotate(-25deg) scale(1.3);
-    transition: transform 0.4s ease-in;
+    transition: transform 0.3s ease-in;
 }
