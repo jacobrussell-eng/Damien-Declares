@@ -1,21 +1,41 @@
-// Game variable initation:
-let correctOrder = [];
-let playerOrder = [];
-let counter;
-let gameover;
-let highscore;
+// Game variables init:
+let cpu = [];
+let player = [];
+let round = 0;
+let playersTurn = false;
+let allCorrect;
+let iterator;
+let highscore = 0; // strech goal: db store?
 
-// HTML element initation:
+// Color reference for flashing buttons:
+const flashHSLValues = {
+    1: "hsl(94, 100%, 70%)", // Green
+    2: "hsl(0, 100%, 70%)",  // Red
+    3: "hsl(53, 100%, 60%)", // Yellow
+    4: "hsl(214, 100%, 65%)" // Blue
+};
 
+// HTML element connect:
+const buttons = document.querySelectorAll(".quarter");
+const scoreDisplay = document.querySelector("#score");
 const highscoreDisplay = document.querySelector("#highscore");
-
+const buttonList = {
+    1: document.querySelector(".q1"), // Green
+    2: document.querySelector(".q2"), // Red
+    3: document.querySelector(".q3"), // Yellow
+    4: document.querySelector(".q4")  // Blue
+};
 
 // Audio file initation:
+const soundFX = {
+    1: "wavs/green.wav",
+    2: "wavs/red.wav",
+    3: "wavs/yellow.wav",
+    4: "wavs/blue.wav"
+};
+
+
 const bgTrack = new Audio("wavs/AveSatani.wav");
-const greenBleep = new Audio("wavs/green.wav");
-const redBleep = new Audio("wavs/red.wav");
-const yellowBleep = new Audio("wavs/yellow.wav");
-const blueBleep = new Audio("wavs/blue.wav");
 const wrongChoice = new Audio("wavs/gameover.wav");
 
 // Image preloading:
@@ -27,11 +47,13 @@ var damienPreload = new Image();
 damienPreload.src = "images/damien.png";
 
 // On Load actions:
-window.addEventListener("DOMContentLoaded", event => {
+window.addEventListener("DOMContentLoaded", () => {
     bgTrack.volume = 0.2;
-    bgTrack.play();
-    const scoreDisplay = document.querySelector("#score");
+    bgTrack.play(); // < set to loop? >
+    disableButtons(false);
+    buttons.forEach(button => { button.addEventListener('click', (event) => buttonPress(event.target))});
     scoreDisplay.innerHTML = "0";
+    highscoreDisplay.innerHTML = "0";
 });
 
 // Background Music button functionality:
@@ -46,119 +68,145 @@ function toggleMusic() {
     }
 }
 
-function addToScore() {
-    let Bloop = new Audio("wavs/red.wav");
-    let currentScore = parseInt(document.getElementById("score").textContent);
-    currentScore++;
-    Bloop.play();
-    document.getElementById("score").textContent = String(currentScore);
+// Prevent button activity:
+function disableButtons(isEnabled) {
+    buttons.forEach(button => {
+        if (isEnabled) {
+            button.classList.remove("disabled");
+        } else {
+            button.classList.add("disabled");
+        }
+    });
+}
+
+// Display color function:
+function displayColors(colorSequence) {
+    let colorIndex = 0;
+
+    playersTurn = false;
+
+    // Function to flash a single color:
+    const flashColor = () => {
+        // If complete, end sequence:
+        if (colorIndex >= colorSequence.length) {
+            return; 
+        }
+
+        // Determine which color to flash:
+        let colorId = colorSequence[colorIndex]; // = 1, 2, 3 or 4
+
+        // Flash the color & play sound:
+        buttonList[colorId].style.backgroundColor = flashHSLValues[colorId]; // Set the brighter color
+        const beep = new Audio(soundFX[colorId]);
+        beep.play();
+
+        // Reset the color after 0.5s:
+        setTimeout(() => {
+            buttonList[colorId].style.backgroundColor = "";
+            colorIndex++;
+            // Wait 0.1s before flashing the next color
+            setTimeout(flashColor, 100); 
+        }, 500);
+    };
+
+    // Start the flashing sequence:
+    flashColor(); 
+}
+
+
+// Button function:
+function buttonPress(Quarter) {
+    if (!playersTurn) { return; };
+    const buttonValue = parseInt(Quarter.dataset.value); 
+    console.log("buttonValue: ", buttonValue);
+    console.log("cpu[iterator]: ", cpu[iterator]);
+    if (buttonValue === cpu[iterator]) {
+        const beep = new Audio(soundFX[buttonValue]);
+        beep.play();
+        allCorrect = true;
+        console.log("Correct button");
+        console.log("iterator before: ", iterator);
+        player.push(buttonValue);
+        console.log("Player array in check: ", player);
+        iterator++;
+        console.log("iterator after: ", iterator);
+        // If all colors are matched:
+        if (iterator === cpu.length && allCorrect) { 
+            console.log("All correct");
+            resolveInput(); // Start new round
+        } 
+    } else {
+        wrongChoice.play(); 
+        allCorrect = false;
+        console.log("Wrong button");
+        rejectInput(); // Game over
+        return;
+    }  
+    return;
+}
+
+// Player Input handling:
+function playerInput() {
+    iterator = 0;
+    allCorrect = true;
+    player = [];
+    return new Promise ((resolve, reject) => {
+        resolveInput = resolve;
+        rejectInput = reject;
+    });
 }
 
 // Main game code:
-function gameSession() {
-    // Reset game variables:
-    gameover = false;
-    correctOrder = [];
-    playerOrder = [];
-    counter = 0;
+async function gameRound() {
+    console.log("Round counter (start of gameRound): ", round);
+    
+    // Disable player activity:
+    disableButtons(false);
+    playersTurn = false;
 
-    // Connect HTML elements:
-    const greenQuarter = document.querySelector(".q1");
-    const redQuarter = document.querySelector(".q2");
-    const yellowQuarter = document.querySelector(".q3");
-    const blueQuarter = document.querySelector(".q4");
+    // Generate a new color to store:
+    let newColor = Math.floor((Math.random()*4)+1);
+    cpu.push(newColor);
+    console.log("CPU array after new color: ", cpu);
 
-    while (!gameover) {
-        // Generate new color:
-        let currentColor = Math.floor((Math.random()*4)+1);
-        correctOrder[counter] = currentColor;
+    // Display each cpu color:
+    displayColors(cpu);
 
-        // Displaying colors:
-        for (j=0;j<correctOrder.length;j++) {
-            // set to default first?
-            setTimeout(function() {
-                switch (correctOrder[j]) {
-                    case 1:
-                        greenQuarter.style.backgroundColor = "hsl(94,100%,100%)";
-                        greenBleep.play();
-                        break;
-                    case 2:
-                        redQuarter.style.backgroundColor = "hsl(0,100%,100%)";
-                        redBleep.play();
-                        break;
-                    case 3:
-                        yellowQuarter.style.backgroundColor = "hsl(53,100%)";
-                        yellowBleep.play();
-                        break;
-                    case 4:
-                        blueQuarter.style.backgroundColor = "hsl(214,100%)";
-                        blueBleep.play();
-                        break;
-                }
-            },1000);
-        }
-
-        playerOrder = [];
+    // Player's turn:
+    disableButtons(true);
+    playersTurn = true;
+    await playerInput().then(() => {
+        console.log("Resolved");
+        round++;
+        console.log("Round counter (in .then): ", round);
+        player = [];
         iterator = 0;
-
-        /* 
-            1: Logic to force wait for enough user button presses (while?)
-            2: Detect what button is pressed, and add value to playerOrder[]
-            3: Check each playerOrder[i] against correctOrder[i]
-            4: If incorrect, game over. If correct, next round
-            5: Update scores and highscore if necessary
-        */
-
-        while (playerOrder.length < correctOrder.length) {
-            greenQuarter.addEventListener("click", (event) => {
-                playerOrder[iterator] = 1;
-                if (playerOrder[iterator] != correctOrder[iterator]) {
-                    gameover=true;
-                    return; // exit game
-                }; 
-            });
-            redQuarter.addEventListener("click", (event) => {
-                playerOrder[iterator] = 2;
-                if (playerOrder[iterator] != correctOrder[iterator]) {
-                    gameover=true;
-                    return; // exit game
-                };
-            });
-            yellowQuarter.addEventListener("click", (event) => {
-                playerOrder[iterator] = 3;
-                if (playerOrder[iterator] != correctOrder[iterator]) {
-                    gameover=true;
-                    return; // exit game
-                };
-            });
-            blueQuarter.addEventListener("click", (event) => {
-                playerOrder[iterator] = 4;
-                if (playerOrder[iterator] != correctOrder[iterator]) {
-                    gameover=true;
-                    return; // exit game
-                };
-            });
-        
-            if (gameover) {
-                // game over logic
-                // reveal text element that says "game over"
-                const tryAgain = document.querySelector("#playButton");
-                tryAgain.innerHTML = "Try Again!";
-                wrongChoice.play();
-                break;
-            } else { iterator++ }
+        // Update score and highscore:
+        scoreDisplay.textContent = String(round);
+        if (round > highscore) {
+            highscore = round;
+            highscoreDisplay.textContent = String(highscore);
         }
+        // Wait 0.5s before next round:
+        setTimeout(gameRound, 750); 
+    })
+    .catch(() => {
+        console.log("Rejected");
+        console.log("Player array (in .catch): ", player);
+        console.log("CPU array (in .catch): ", cpu);
+        disableButtons(false); // Disable at end of game
+        const tryAgain = document.querySelector("#playButton");
+        tryAgain.innerHTML = "Try Again!";
+        return; // escape 
+    });
+}
 
-        if (gameover) {
-            return; // end game
-        } 
-        else { // Update scores and move to next round:
-            counter++;
-            scoreDisplay.textContent = String(counter);
-            if (counter > highscore) {
-                highscore = counter;
-                highscoreDisplay.textContent = String(highscore);
-            }
-        }
-    }
+function startNewGame() {
+    cpu = [];
+    player = [];
+    scoreDisplay.textContent = String(0);
+    round = 0;
+    disableButtons(false);
+    // Wait 0.35s before starting:
+    setTimeout(gameRound, 350); 
 }

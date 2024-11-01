@@ -2,7 +2,7 @@
 
 :root {
     --bg-col: hsl(0, 77%, 55%);
-    --head-col: hsl(0.19,23%,11%);
+    --head-col: hsl(1,23%,11%);
 }
 
 header {
@@ -61,6 +61,7 @@ body {
     z-index: 5;
 }
 
+/* Quarter circles: */
 .quarter {
     width: 45%;
     height: 45%;
@@ -69,9 +70,9 @@ body {
     border: none;
 }
 
-/* Quarter circles: */
 .q1 {
-    background-color: hsl(94, 75%, 60%); /* Green */
+    --button-default: hsl(94, 75%, 60%); /* Green */
+    background-color: var(--button-default);
     border-radius: 100% 0 0 0;
     top: 0; margin-top: 4%;
     left: 0; margin-left: 4%;
@@ -83,7 +84,8 @@ body {
 }
 
 .q2 {
-    background-color: hsl(0, 75%, 60%); /* Red */
+    --button-default: hsl(0, 75%, 60%); /* Red */
+    background-color: var(--button-default);
     border-radius: 0 100% 0 0;
     top: 0; margin-top: 4%;
     right: 0; margin-right: 4%;
@@ -95,7 +97,8 @@ body {
 }
 
 .q3 {
-    background-color: hsl(53, 75%, 50%); /* Green */
+    --button-default: hsl(53, 75%, 50%); /* Yellow */
+    background-color: var(--button-default);
     border-radius: 0 0 0 100%;
     bottom: 0; margin-bottom: 4%;
     left: 0; margin-left: 4%;
@@ -107,7 +110,8 @@ body {
 }
 
 .q4 {
-    background-color: hsl(214, 75%, 40%);  /* Blue */
+    --button-default: hsl(214, 75%, 40%);  /* Blue */
+    background-color: var(--button-default);
     border-radius: 0 0 100% 0;
     bottom: 0; margin-bottom: 4%;
     right: 0; margin-right: 4%;
@@ -118,6 +122,15 @@ body {
     background-color: hsl(214, 100%, 35%);
 }
 
+/* Non-functional button state: */
+.quarter.disabled { 
+    cursor: default;
+    background-color: var(--button-default);
+}
+.quarter.disabled:hover,
+.quarter.disabled:active {
+    transform: none; 
+}
 
 /* Circle centre: */
 .overlay {
@@ -130,6 +143,12 @@ body {
     background-color: var(--head-col);
     z-index: 10;
     /* border: 1px solid black; */
+}
+.overlay:hover h2 {
+    color: var(--bg-col);
+}
+.overlay:active {
+    filter: brightness(0.8); /* Darken */
 }
 
 h2 {
