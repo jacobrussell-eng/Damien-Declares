@@ -2,7 +2,6 @@
 let cpu = [];
 let player = [];
 let round = 0;
-let playersTurn = false;
 let allCorrect;
 let iterator;
 let highscore = 0; // strech goal: db store?
@@ -17,6 +16,9 @@ const flashHSLValues = {
 
 // HTML element connect:
 const buttons = document.querySelectorAll(".quarter");
+const centerDisplay = document.querySelector("#playButton");
+const startLink = document.querySelector("#startLink");
+const overlayDiv = document.querySelector(".overlay");
 const scoreDisplay = document.querySelector("#score");
 const highscoreDisplay = document.querySelector("#highscore");
 const buttonList = {
@@ -33,8 +35,6 @@ const soundFX = {
     3: "wavs/yellow.wav",
     4: "wavs/blue.wav"
 };
-
-
 const bgTrack = new Audio("wavs/AveSatani.wav");
 const wrongChoice = new Audio("wavs/gameover.wav");
 
@@ -49,9 +49,12 @@ damienPreload.src = "images/damien.png";
 // On Load actions:
 window.addEventListener("DOMContentLoaded", () => {
     bgTrack.volume = 0.2;
-    bgTrack.play(); // < set to loop? >
-    disableButtons(false);
-    buttons.forEach(button => { button.addEventListener('click', (event) => buttonPress(event.target))});
+    bgTrack.loop = true;
+    bgTrack.play();
+    buttons.forEach(button => { 
+        button.addEventListener('click', (event) => buttonPress(event.target));
+        disableButton(button);
+    });
     scoreDisplay.innerHTML = "0";
     highscoreDisplay.innerHTML = "0";
 });
@@ -69,21 +72,20 @@ function toggleMusic() {
 }
 
 // Prevent button activity:
-function disableButtons(isEnabled) {
-    buttons.forEach(button => {
-        if (isEnabled) {
-            button.classList.remove("disabled");
-        } else {
-            button.classList.add("disabled");
-        }
-    });
+function disableButton(target) {
+    if (target.disabled === true) {
+        target.classList.remove("disabled");
+        target.disabled = false;
+    } else {
+        target.classList.add("disabled");
+        target.disabled = true;
+    }
+
 }
 
 // Display color function:
 function displayColors(colorSequence) {
     let colorIndex = 0;
-
-    playersTurn = false;
 
     // Function to flash a single color:
     const flashColor = () => {
@@ -116,7 +118,6 @@ function displayColors(colorSequence) {
 
 // Button function:
 function buttonPress(Quarter) {
-    if (!playersTurn) { return; };
     const buttonValue = parseInt(Quarter.dataset.value); 
     console.log("buttonValue: ", buttonValue);
     console.log("cpu[iterator]: ", cpu[iterator]);
@@ -160,9 +161,11 @@ function playerInput() {
 async function gameRound() {
     console.log("Round counter (start of gameRound): ", round);
     
+    
     // Disable player activity:
-    disableButtons(false);
-    playersTurn = false;
+    buttons.forEach(button => {
+        disableButton(button);
+    });
 
     // Generate a new color to store:
     let newColor = Math.floor((Math.random()*4)+1);
@@ -173,8 +176,9 @@ async function gameRound() {
     displayColors(cpu);
 
     // Player's turn:
-    disableButtons(true);
-    playersTurn = true;
+    buttons.forEach(button => {
+        disableButton(button);
+    });
     await playerInput().then(() => {
         console.log("Resolved");
         round++;
@@ -194,9 +198,15 @@ async function gameRound() {
         console.log("Rejected");
         console.log("Player array (in .catch): ", player);
         console.log("CPU array (in .catch): ", cpu);
-        disableButtons(false); // Disable at end of game
-        const tryAgain = document.querySelector("#playButton");
-        tryAgain.innerHTML = "Try Again!";
+        // Disable at end of game:
+        buttons.forEach(button => {
+            disableButton(button);
+        });
+        startLink.onclick = startNewGame;
+        disableButton(overlayDiv);
+        centerDisplay.style.fontFamily = "Orbitron";
+        centerDisplay.style.fontWeight = "bolder";
+        centerDisplay.innerHTML = "Try Again!";
         return; // escape 
     });
 }
@@ -206,7 +216,15 @@ function startNewGame() {
     player = [];
     scoreDisplay.textContent = String(0);
     round = 0;
-    disableButtons(false);
+    buttons.forEach(button => {
+        disableButton(button);
+    });
+    centerDisplay.textContent = "OBEY";
+    centerDisplay.style.fontWeight = 200;
+    centerDisplay.style.fontFamily = "Emilys Candy";
+    // Disable center button:
+    disableButton(overlayDiv);
+    startLink.onclick = null;
     // Wait 0.35s before starting:
     setTimeout(gameRound, 350); 
 }
